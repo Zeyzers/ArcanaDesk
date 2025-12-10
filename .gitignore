@@ -1,0 +1,30 @@
+# Node / Electron
+node_modules/
+dist/
+out/
+tmp/
+temp/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build artifacts
+*.asar
+*.asar.unpacked
+
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Env / config
+.env
+.env.local
+
+# VS Code
+.vscode/
+
+# Logs
+*.log
+logs/
