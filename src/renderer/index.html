@@ -14,7 +14,7 @@
         <div>
           <p class="eyebrow">ArcanaDesk</p>
           <h1>Console del Dungeon Master</h1>
-          <p class="muted tiny">Dark mode fissa · Niente SRD · Solo tool intelligenti</p>
+          <p class="muted tiny">DM Smart - Not Hard</p>
         </div>
       </div>
     </header>
@@ -24,7 +24,7 @@
         <div class="hero">
           <div>
             <p class="eyebrow">Hub centrale</p>
-            <h2>Strumenti rapidi, nessun fronzolo</h2>
+            <h2>Strumenti rapidi</h2>
             <p class="muted">Scegli il tool e resta in focus. I dati restano solo in locale.</p>
           </div>
         </div>
@@ -61,6 +61,75 @@
             </div>
             <span class="pill">Apri</span>
           </button>
+          <button class="card" data-nav="npc">
+            <div>
+              <p class="eyebrow">Schede Creature</p>
+              <h3>NPC / Mostri</h3>
+              <p class="muted">Anagrafiche rapide con AC/HP/Note, salva su file.</p>
+            </div>
+            <span class="pill">Apri</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="view" data-view="npc">
+        <div class="mini-topbar">
+          <div class="quick-links">
+            <button data-nav="hub">Hub</button>
+            <button data-nav="turns">Initiative</button>
+            <button data-nav="notes">Notes</button>
+            <button data-nav="timers">Timer</button>
+            <button data-nav="npc" class="active">NPC</button>
+            <button class="quick-roll" data-nav="dice">Quick Roll</button>
+          </div>
+        </div>
+        <div class="panel">
+          <header>
+            <div>
+              <p class="eyebrow">Schede Creature</p>
+              <h2>NPC / Mostri</h2>
+            </div>
+            <div class="pill">Salvate in locale + export JSON</div>
+          </header>
+
+          <div class="npc-layout">
+            <aside class="npc-list">
+              <div class="note-list-head">
+                <button id="newNpc" class="primary">Nuova scheda</button>
+                <button id="deleteNpc" class="ghost">Elimina</button>
+              </div>
+              <input id="npcSearch" placeholder="Cerca per nome/tipo...">
+              <ul id="npcList"></ul>
+              <div class="note-actions">
+                <button id="exportAllNpc" class="ghost">Esporta tutte</button>
+                <button id="importAllNpc" class="ghost">Importa JSON</button>
+                <input id="npcImportInput" type="file" accept="application/json" style="display:none">
+              </div>
+            </aside>
+
+            <div class="npc-editor">
+              <div class="input-grid">
+                <input id="npcName" placeholder="Nome (es. Guardiano della soglia)">
+                <input id="npcType" placeholder="Tipo/ruolo (es. Umano, Non morto)">
+                <input id="npcAC" type="number" min="0" placeholder="CA">
+                <input id="npcHP" type="number" min="0" placeholder="HP">
+                <input id="npcSpeed" placeholder="Velocità (es. 30 ft, volo 40)">
+                <input id="npcTags" placeholder="Tag (es. Banda Rossa, Contatto villaggio)">
+              </div>
+              <div class="input-grid">
+                <input id="npcSTR" type="number" placeholder="STR">
+                <input id="npcDEX" type="number" placeholder="DEX">
+                <input id="npcCON" type="number" placeholder="CON">
+                <input id="npcINT" type="number" placeholder="INT">
+                <input id="npcWIS" type="number" placeholder="WIS">
+                <input id="npcCHA" type="number" placeholder="CHA">
+              </div>
+              <textarea id="npcNotes" spellcheck="false" placeholder="Note, motivazioni..."></textarea>
+              <div class="note-actions">
+                <button id="exportNpc" class="ghost">Esporta scheda (JSON)</button>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -72,6 +141,7 @@
             <button data-nav="notes">Notes</button>
             <button data-nav="timers">Timer</button>
             <button data-nav="dice" class="quick-roll">Quick Roll</button>
+            <button data-nav="npc">NPC</button>
           </div>
         </div>
         <div class="panel">
@@ -93,7 +163,22 @@
 
           <div class="input-row">
             <label class="stack">
-              <span>Formula (es. 3d8+4)</span>
+              <span class="with-help">
+                <span>Formula (es. 3d8+4)</span>
+                <span class="tooltip" aria-label="Sintassi tiri">
+                  ?
+                  <span class="tooltip-text">
+                    Usa termini con + o -.<br>
+                    - XdY: lancia X dadi Y (es. 3d6)<br>
+                    - Modificatori: +4 o -2<br>
+                    - Vantaggio/Svantaggio: adv / dis (=> 2d20kh1 o 2d20kl1)<br>
+                    - Keep/Drop: kh1, kl1, dh1, dl1<br>
+                    - Reroll: r1, r<=2, r=3<br>
+                    - Esplosione: ! (ritira quando fai il massimo)<br>
+                    - Somma termini: 2d6+1d4+3
+                  </span>
+                </span>
+              </span>
               <input id="rollInput" type="text" placeholder="2d20kh1+5 o 3d8+4" autocomplete="off">
             </label>
             <button id="rollButton" class="primary">Lancia</button>
@@ -119,6 +204,7 @@
             <button data-nav="notes">Notes</button>
             <button data-nav="timers">Timer</button>
             <button class="quick-roll" data-nav="dice">Quick Roll</button>
+            <button data-nav="npc">NPC</button>
           </div>
         </div>
         <div class="panel">
@@ -185,6 +271,7 @@
             <button data-nav="notes">Notes</button>
             <button data-nav="timers" class="active">Timer</button>
             <button class="quick-roll" data-nav="dice">Quick Roll</button>
+            <button data-nav="npc">NPC</button>
           </div>
         </div>
         <div class="panel">
@@ -223,6 +310,7 @@
             <button data-nav="notes" class="active">Notes</button>
             <button data-nav="timers">Timer</button>
             <button class="quick-roll" data-nav="dice">Quick Roll</button>
+            <button data-nav="npc">NPC</button>
           </div>
         </div>
         <div class="panel">
@@ -234,9 +322,25 @@
             <div class="muted tiny" id="saveStatus">Auto-save attivo</div>
           </header>
 
-          <textarea id="dmNotes" spellcheck="false" placeholder="Agganci di trama, descrizioni visive, voci NPC..."></textarea>
-          <div class="note-actions">
-            <button id="exportNotes" class="ghost">Esporta Markdown</button>
+          <div class="note-layout">
+            <aside class="note-list">
+              <div class="note-list-head">
+                <button id="newNote" class="primary">Nuova nota</button>
+                <button id="deleteNote" class="ghost">Elimina</button>
+              </div>
+              <input id="noteSearch" placeholder="Cerca titolo o testo...">
+              <ul id="noteList"></ul>
+            </aside>
+            <div class="note-editor">
+              <input id="noteTitle" placeholder="Titolo nota (es. Capitolo 1 - Introduzione)">
+              <textarea id="dmNotes" spellcheck="false" placeholder="Agganci di trama, descrizioni visive, voci NPC..."></textarea>
+              <div class="note-actions">
+                <button id="exportNotes" class="ghost">Esporta nota (Markdown)</button>
+                <button id="exportAllNotes" class="ghost">Esporta tutte</button>
+                <button id="importAllNotes" class="ghost">Importa JSON</button>
+                <input id="noteImportInput" type="file" accept="application/json" style="display:none">
+              </div>
+            </div>
           </div>
         </div>
       </section>
