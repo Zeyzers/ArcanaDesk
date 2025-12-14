@@ -1,7 +1,7 @@
-const { contextBridge, ipcRenderer } = require('electron');
+const { contextBridge, ipcRenderer } = require("electron");
 
-contextBridge.exposeInMainWorld('arcanaDesk', {
+contextBridge.exposeInMainWorld("arcanaDesk", {
   versions: process.versions,
-  loadState: () => ipcRenderer.invoke('state:get'),
-  saveState: (data) => ipcRenderer.invoke('state:set', data)
+  loadState: () => ipcRenderer.invoke("state:get"),
+  saveState: (data) => ipcRenderer.invoke("state:set", data),
 });

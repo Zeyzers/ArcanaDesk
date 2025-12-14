@@ -1,353 +1,440 @@
 <!doctype html>
 <html lang="it">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ArcanaDesk · DM Toolkit</title>
-  <link rel="stylesheet" href="css/styles.css">
-</head>
-<body>
-  <div class="app-shell">
-    <header class="topbar">
-      <div class="brand">
-        <div class="glyph">⚡</div>
-        <div>
-          <p class="eyebrow">ArcanaDesk</p>
-          <h1>Console del Dungeon Master</h1>
-          <p class="muted tiny">DM Smart - Not Hard</p>
-        </div>
-      </div>
-    </header>
-
-    <main>
-      <section class="view active" data-view="hub">
-        <div class="hero">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ArcanaDesk · DM Toolkit</title>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand">
+          <div class="glyph">⚡</div>
           <div>
-            <p class="eyebrow">Hub centrale</p>
-            <h2>Strumenti rapidi</h2>
-            <p class="muted">Scegli il tool e resta in focus. I dati restano solo in locale.</p>
+            <p class="eyebrow">ArcanaDesk</p>
+            <h1>Console del Dungeon Master</h1>
+            <p class="muted tiny">DM Smart - Not Hard</p>
           </div>
         </div>
-        <div class="hub-grid">
-          <button class="card" data-nav="dice">
-            <div>
-              <p class="eyebrow">Dice Roller PRO</p>
-              <h3>Tiri personalizzati</h3>
-              <p class="muted">Shortcut, cronologia, keep highest/lowest.</p>
-            </div>
-            <span class="pill">Apri</span>
-          </button>
-          <button class="card" data-nav="turns">
-            <div>
-              <p class="eyebrow">Turn Tracker</p>
-              <h3>Iniziative e turni</h3>
-              <p class="muted">Ordina, evidenzia, note e timer opzionale.</p>
-            </div>
-            <span class="pill">Apri</span>
-          </button>
-          <button class="card" data-nav="timers">
-            <div>
-              <p class="eyebrow">Timer multipli</p>
-              <h3>Countdown / Cronometri</h3>
-              <p class="muted">Preset round, 1m, 5m, 10m e custom.</p>
-            </div>
-            <span class="pill">Apri</span>
-          </button>
-          <button class="card" data-nav="notes">
-            <div>
-              <p class="eyebrow">Note del DM</p>
-              <h3>Appunti veloci</h3>
-              <p class="muted">Auto-save e export Markdown friendly.</p>
-            </div>
-            <span class="pill">Apri</span>
-          </button>
-          <button class="card" data-nav="npc">
-            <div>
-              <p class="eyebrow">Schede Creature</p>
-              <h3>NPC / Mostri</h3>
-              <p class="muted">Anagrafiche rapide con AC/HP/Note, salva su file.</p>
-            </div>
-            <span class="pill">Apri</span>
-          </button>
-        </div>
-      </section>
+      </header>
 
-      <section class="view" data-view="npc">
-        <div class="mini-topbar">
-          <div class="quick-links">
-            <button data-nav="hub">Hub</button>
-            <button data-nav="turns">Initiative</button>
-            <button data-nav="notes">Notes</button>
-            <button data-nav="timers">Timer</button>
-            <button data-nav="npc" class="active">NPC</button>
-            <button class="quick-roll" data-nav="dice">Quick Roll</button>
-          </div>
-        </div>
-        <div class="panel">
-          <header>
+      <main>
+        <section class="view active" data-view="hub">
+          <div class="hero">
             <div>
-              <p class="eyebrow">Schede Creature</p>
-              <h2>NPC / Mostri</h2>
-            </div>
-            <div class="pill">Salvate in locale + export JSON</div>
-          </header>
-
-          <div class="npc-layout">
-            <aside class="npc-list">
-              <div class="note-list-head">
-                <button id="newNpc" class="primary">Nuova scheda</button>
-                <button id="deleteNpc" class="ghost">Elimina</button>
-              </div>
-              <input id="npcSearch" placeholder="Cerca per nome/tipo...">
-              <ul id="npcList"></ul>
-              <div class="note-actions">
-                <button id="exportAllNpc" class="ghost">Esporta tutte</button>
-                <button id="importAllNpc" class="ghost">Importa JSON</button>
-                <input id="npcImportInput" type="file" accept="application/json" style="display:none">
-              </div>
-            </aside>
-
-            <div class="npc-editor">
-              <div class="input-grid">
-                <input id="npcName" placeholder="Nome (es. Guardiano della soglia)">
-                <input id="npcType" placeholder="Tipo/ruolo (es. Umano, Non morto)">
-                <input id="npcAC" type="number" min="0" placeholder="CA">
-                <input id="npcHP" type="number" min="0" placeholder="HP">
-                <input id="npcSpeed" placeholder="Velocità (es. 30 ft, volo 40)">
-                <input id="npcTags" placeholder="Tag (es. Banda Rossa, Contatto villaggio)">
-              </div>
-              <div class="input-grid">
-                <input id="npcSTR" type="number" placeholder="STR">
-                <input id="npcDEX" type="number" placeholder="DEX">
-                <input id="npcCON" type="number" placeholder="CON">
-                <input id="npcINT" type="number" placeholder="INT">
-                <input id="npcWIS" type="number" placeholder="WIS">
-                <input id="npcCHA" type="number" placeholder="CHA">
-              </div>
-              <textarea id="npcNotes" spellcheck="false" placeholder="Note, motivazioni..."></textarea>
-              <div class="note-actions">
-                <button id="exportNpc" class="ghost">Esporta scheda (JSON)</button>
-              </div>
+              <p class="eyebrow">Hub centrale</p>
+              <h2>Strumenti rapidi</h2>
+              <p class="muted">
+                Scegli il tool e resta in focus. I dati restano solo in locale.
+              </p>
             </div>
           </div>
-        </div>
-      </section>
-
-      <section class="view" data-view="dice">
-        <div class="mini-topbar">
-          <div class="quick-links">
-            <button data-nav="hub">Hub</button>
-            <button data-nav="turns">Initiative</button>
-            <button data-nav="notes">Notes</button>
-            <button data-nav="timers">Timer</button>
-            <button data-nav="npc">NPC</button>
-            <button data-nav="dice" class="quick-roll">Quick Roll</button>
+          <div class="hub-grid">
+            <button class="card" data-nav="dice">
+              <div>
+                <p class="eyebrow">Dice Roller PRO</p>
+                <h3>Tiri personalizzati</h3>
+                <p class="muted">Shortcut, cronologia, keep highest/lowest.</p>
+              </div>
+              <span class="pill">Apri</span>
+            </button>
+            <button class="card" data-nav="turns">
+              <div>
+                <p class="eyebrow">Turn Tracker</p>
+                <h3>Iniziative e turni</h3>
+                <p class="muted">Ordina, evidenzia, note e timer opzionale.</p>
+              </div>
+              <span class="pill">Apri</span>
+            </button>
+            <button class="card" data-nav="timers">
+              <div>
+                <p class="eyebrow">Timer multipli</p>
+                <h3>Countdown / Cronometri</h3>
+                <p class="muted">Preset round, 1m, 5m, 10m e custom.</p>
+              </div>
+              <span class="pill">Apri</span>
+            </button>
+            <button class="card" data-nav="notes">
+              <div>
+                <p class="eyebrow">Note del DM</p>
+                <h3>Appunti veloci</h3>
+                <p class="muted">Auto-save e export Markdown friendly.</p>
+              </div>
+              <span class="pill">Apri</span>
+            </button>
+            <button class="card" data-nav="npc">
+              <div>
+                <p class="eyebrow">Schede Creature</p>
+                <h3>NPC / Mostri</h3>
+                <p class="muted">
+                  Anagrafiche rapide con AC/HP/Note, salva su file.
+                </p>
+              </div>
+              <span class="pill">Apri</span>
+            </button>
           </div>
-        </div>
-        <div class="panel">
-          <header>
-            <div>
-              <p class="eyebrow">Dice Roller PRO</p>
-              <h2>Tiri veloci e personalizzati</h2>
-            </div>
-            <div class="shortcuts">
-              <button data-die="d4">d4</button>
-              <button data-die="d6">d6</button>
-              <button data-die="d8">d8</button>
-              <button data-die="d10">d10</button>
-              <button data-die="d12">d12</button>
-              <button data-die="d20">d20</button>
-              <button data-die="d100">d100</button>
-            </div>
-          </header>
+        </section>
 
-          <div class="input-row">
-            <label class="stack">
-              <span class="with-help">
-                <span>Formula (es. 3d8+4)</span>
-                <span class="tooltip" aria-label="Sintassi tiri">
-                  ?
-                  <span class="tooltip-text">
-                    Usa termini con + o -.<br>
-                    - XdY: lancia X dadi Y (es. 3d6)<br>
-                    - Modificatori: +4 o -2<br>
-                    - Vantaggio/Svantaggio: adv / dis (=> 2d20kh1 o 2d20kl1)<br>
-                    - Keep/Drop: kh1, kl1, dh1, dl1<br>
-                    - Reroll: r1, r<=2, r=3<br>
-                    - Esplosione: ! (ritira quando fai il massimo)<br>
-                    - Somma termini: 2d6+1d4+3
+        <section class="view" data-view="npc">
+          <div class="mini-topbar">
+            <div class="quick-links">
+              <button data-nav="hub">Hub</button>
+              <button data-nav="turns">Initiative</button>
+              <button data-nav="notes">Notes</button>
+              <button data-nav="timers">Timer</button>
+              <button data-nav="npc" class="active">NPC</button>
+              <button class="quick-roll" data-nav="dice">Quick Roll</button>
+            </div>
+          </div>
+          <div class="panel">
+            <header>
+              <div>
+                <p class="eyebrow">Schede Creature</p>
+                <h2>NPC / Mostri</h2>
+              </div>
+              <div class="pill">Salvate in locale + export JSON</div>
+            </header>
+
+            <div class="npc-layout">
+              <aside class="npc-list">
+                <div class="note-list-head">
+                  <button id="newNpc" class="primary">Nuova scheda</button>
+                  <button id="deleteNpc" class="ghost">Elimina</button>
+                </div>
+                <select id="npcSort">
+                  <option value="name">Ordina per nome</option>
+                  <option value="tag">Ordina per tag</option>
+                </select>
+                <input id="npcSearch" placeholder="Cerca per nome/tipo..." />
+                <ul id="npcList"></ul>
+                <div class="note-actions">
+                  <button id="exportAllNpc" class="ghost">Esporta tutte</button>
+                  <button id="importAllNpc" class="ghost">Importa JSON</button>
+                  <input
+                    id="npcImportInput"
+                    type="file"
+                    accept="application/json"
+                    style="display: none"
+                  />
+                </div>
+              </aside>
+
+              <div class="npc-editor">
+                <div class="input-grid">
+                  <input
+                    id="npcName"
+                    placeholder="Nome (es. Guardiano della soglia)"
+                  />
+                  <input
+                    id="npcType"
+                    placeholder="Tipo/ruolo (es. Umano, Non morto)"
+                  />
+                  <input id="npcAC" type="number" min="0" placeholder="CA" />
+                  <input id="npcHP" type="number" min="0" placeholder="HP" />
+                  <input
+                    id="npcHPCurrent"
+                    type="number"
+                    min="0"
+                    placeholder="HP attuali"
+                  />
+                  <input
+                    id="npcSpeed"
+                    placeholder="Velocità (es. 30 ft, volo 40)"
+                  />
+                  <input
+                    id="npcTags"
+                    placeholder="Tag (es. Banda Rossa, Contatto villaggio)"
+                  />
+                </div>
+                <div class="hp-controls">
+                  <button class="ghost" data-hp="-5">-5</button>
+                  <button class="ghost" data-hp="-1">-1</button>
+                  <button class="ghost" data-hp="+1">+1</button>
+                  <button class="ghost" data-hp="+5">+5</button>
+                  <button class="ghost" id="npcHpUndo">Undo</button>
+                </div>
+                <div class="input-grid">
+                  <input id="npcSTR" type="number" placeholder="STR" />
+                  <input id="npcDEX" type="number" placeholder="DEX" />
+                  <input id="npcCON" type="number" placeholder="CON" />
+                  <input id="npcINT" type="number" placeholder="INT" />
+                  <input id="npcWIS" type="number" placeholder="WIS" />
+                  <input id="npcCHA" type="number" placeholder="CHA" />
+                </div>
+                <textarea
+                  id="npcNotes"
+                  spellcheck="false"
+                  placeholder="Note, motivazioni..."
+                ></textarea>
+                <div class="note-actions">
+                  <button id="exportNpc" class="ghost">
+                    Esporta scheda (JSON)
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" data-view="dice">
+          <div class="mini-topbar">
+            <div class="quick-links">
+              <button data-nav="hub">Hub</button>
+              <button data-nav="turns">Initiative</button>
+              <button data-nav="notes">Notes</button>
+              <button data-nav="timers">Timer</button>
+              <button data-nav="npc">NPC</button>
+              <button data-nav="dice" class="quick-roll">Quick Roll</button>
+            </div>
+          </div>
+          <div class="panel">
+            <header>
+              <div>
+                <p class="eyebrow">Dice Roller PRO</p>
+                <h2>Tiri veloci e personalizzati</h2>
+              </div>
+              <div class="shortcuts">
+                <button data-die="d4">d4</button>
+                <button data-die="d6">d6</button>
+                <button data-die="d8">d8</button>
+                <button data-die="d10">d10</button>
+                <button data-die="d12">d12</button>
+                <button data-die="d20">d20</button>
+                <button data-die="d100">d100</button>
+              </div>
+            </header>
+
+            <div class="input-row">
+              <label class="stack">
+                <span class="with-help">
+                  <span>Formula (es. 3d8+4)</span>
+                  <span class="tooltip" aria-label="Sintassi tiri">
+                    ?
+                    <span class="tooltip-text">
+                      Usa termini con + o -.<br />
+                      - XdY: lancia X dadi Y (es. 3d6)<br />
+                      - Modificatori: +4 o -2<br />
+                      - Vantaggio/Svantaggio: adv / dis (=> 2d20kh1 o
+                      2d20kl1)<br />
+                      - Keep/Drop: kh1, kl1, dh1, dl1<br />
+                      - Reroll: r1, r<=2, r=3<br />
+                      - Esplosione: ! (ritira quando fai il massimo)<br />
+                      - Somma termini: 2d6+1d4+3
+                    </span>
                   </span>
                 </span>
-              </span>
-              <input id="rollInput" type="text" placeholder="2d20kh1+5 o 3d8+4" autocomplete="off">
-            </label>
-            <button id="rollButton" class="primary">Lancia</button>
-          </div>
-
-          <div class="stats" id="diceStats"></div>
-
-          <div class="history">
-            <div class="history-head">
-              <h3>Cronologia</h3>
-              <button id="clearHistory" class="ghost">Pulisci</button>
+                <input
+                  id="rollInput"
+                  type="text"
+                  placeholder="2d20kh1+5 o 3d8+4"
+                  autocomplete="off"
+                />
+              </label>
+              <button id="rollButton" class="primary">Lancia</button>
             </div>
-            <ul id="historyList" class="history-list"></ul>
-          </div>
-        </div>
-      </section>
 
-      <section class="view" data-view="turns">
-        <div class="mini-topbar">
-          <div class="quick-links">
-            <button data-nav="hub">Hub</button>
-            <button data-nav="turns" class="active">Initiative</button>
-            <button data-nav="notes">Notes</button>
-            <button data-nav="timers">Timer</button>
-            <button data-nav="npc">NPC</button>
-            <button class="quick-roll" data-nav="dice">Quick Roll</button>
-          </div>
-        </div>
-        <div class="panel">
-          <header>
-            <div>
-              <p class="eyebrow">Turn Tracker</p>
-              <h2>Iniziativa e turni</h2>
+            <div class="stats" id="diceStats"></div>
+
+            <div class="history">
+              <div class="history-head">
+                <h3>Cronologia</h3>
+                <button id="clearHistory" class="ghost">Pulisci</button>
+              </div>
+              <ul id="historyList" class="history-list"></ul>
             </div>
-            <div class="pill">Auto-ordina</div>
-          </header>
-
-          <form id="turnForm" class="input-grid">
-            <label class="stack">
-              <span>Creatura/PG</span>
-              <input name="name" required placeholder="Goblin, Aela, ecc.">
-            </label>
-            <label class="stack">
-              <span>Iniziativa</span>
-              <input name="initiative" type="number" step="0.1" required placeholder="15">
-            </label>
-            <label class="stack">
-              <span>Note</span>
-              <input name="note" placeholder="Vantaggio, luce fioca...">
-            </label>
-            <button class="primary" type="submit">Aggiungi</button>
-          </form>
-
-          <div class="turn-controls">
-            <button id="nextTurn" class="primary">Next turn</button>
-            <label class="inline">
-              <input type="checkbox" id="turnTimerToggle">
-              <span>Timer di turno (30s)</span>
-            </label>
-            <span id="turnTimer" class="mono muted"></span>
           </div>
+        </section>
 
-          <div class="cond-form">
-            <div class="input-grid">
-              <select id="condTargetSelect"></select>
-              <select id="condType">
-                <option value="ferito">Ferito</option>
-                <option value="esausto">Esausto</option>
-                <option value="accecato">Accecato</option>
-                <option value="restrained">Intrappolato</option>
-                <option value="advantage">Vantaggio</option>
-                <option value="disadvantage">Svantaggio</option>
-                <option value="custom">Custom (usa nota come nome)</option>
+        <section class="view" data-view="turns">
+          <div class="mini-topbar">
+            <div class="quick-links">
+              <button data-nav="hub">Hub</button>
+              <button data-nav="turns" class="active">Initiative</button>
+              <button data-nav="notes">Notes</button>
+              <button data-nav="timers">Timer</button>
+              <button data-nav="npc">NPC</button>
+              <button class="quick-roll" data-nav="dice">Quick Roll</button>
+            </div>
+          </div>
+          <div class="panel">
+            <header>
+              <div>
+                <p class="eyebrow">Turn Tracker</p>
+                <h2>Iniziativa e turni</h2>
+              </div>
+              <div class="pill">Auto-ordina</div>
+            </header>
+
+            <form id="turnForm" class="input-grid">
+              <label class="stack">
+                <span>Creatura/PG</span>
+                <input name="name" required placeholder="Goblin, Aela, ecc." />
+              </label>
+              <label class="stack">
+                <span>Iniziativa</span>
+                <input
+                  name="initiative"
+                  type="number"
+                  step="0.1"
+                  required
+                  placeholder="15"
+                />
+              </label>
+              <label class="stack">
+                <span>Note</span>
+                <input name="note" placeholder="Vantaggio, luce fioca..." />
+              </label>
+              <button class="primary" type="submit">Aggiungi</button>
+            </form>
+
+            <div class="turn-controls">
+              <button id="nextTurn" class="primary">Next turn</button>
+              <label class="inline">
+                <input type="checkbox" id="turnTimerToggle" />
+                <span>Timer di turno (30s)</span>
+              </label>
+              <span id="turnTimer" class="mono muted"></span>
+            </div>
+
+            <div class="cond-form">
+              <div class="input-grid">
+                <select id="condTargetSelect"></select>
+                <select id="condType">
+                  <option value="ferito">Ferito</option>
+                  <option value="esausto">Esausto</option>
+                  <option value="accecato">Accecato</option>
+                  <option value="restrained">Intrappolato</option>
+                  <option value="advantage">Vantaggio</option>
+                  <option value="disadvantage">Svantaggio</option>
+                  <option value="custom">Custom (usa nota come nome)</option>
+                </select>
+                <input id="condNote" placeholder="Nota o nome custom" />
+                <input
+                  id="condDuration"
+                  type="number"
+                  min="0"
+                  placeholder="Durata in round (0 = infinita)"
+                />
+                <button id="addCondition" class="primary" type="button">
+                  Aggiungi condizione
+                </button>
+              </div>
+              <div class="tiny muted">
+                Le condizioni si salvano sul partecipante selezionato e possono
+                essere multiple.
+              </div>
+            </div>
+
+            <ul id="turnList" class="turn-list"></ul>
+          </div>
+        </section>
+
+        <section class="view" data-view="timers">
+          <div class="mini-topbar">
+            <div class="quick-links">
+              <button data-nav="hub">Hub</button>
+              <button data-nav="turns">Initiative</button>
+              <button data-nav="notes">Notes</button>
+              <button data-nav="timers" class="active">Timer</button>
+              <button data-nav="npc">NPC</button>
+              <button class="quick-roll" data-nav="dice">Quick Roll</button>
+            </div>
+          </div>
+          <div class="panel">
+            <header>
+              <div>
+                <p class="eyebrow">Timer multipli</p>
+                <h2>Countdown e cronometri</h2>
+              </div>
+              <div class="shortcuts">
+                <button class="ghost preset" data-seconds="6">Round 6s</button>
+                <button class="ghost preset" data-seconds="60">1m</button>
+                <button class="ghost preset" data-seconds="300">5m</button>
+                <button class="ghost preset" data-seconds="600">10m</button>
+              </div>
+            </header>
+
+            <div class="input-row">
+              <input
+                id="timerLabel"
+                placeholder="Nome timer (es. Porta segreta)"
+              />
+              <input id="timerSeconds" type="number" min="1" value="300" />
+              <select id="timerMode">
+                <option value="countdown">Countdown</option>
+                <option value="stopwatch">Cronometro</option>
               </select>
-              <input id="condNote" placeholder="Nota o nome custom">
-              <button id="addCondition" class="primary" type="button">Aggiungi condizione</button>
+              <button id="addTimer" class="primary">Crea</button>
             </div>
-            <div class="tiny muted">Le condizioni si salvano sul partecipante selezionato e possono essere multiple.</div>
-          </div>
 
-          <ul id="turnList" class="turn-list"></ul>
-        </div>
-      </section>
-
-      <section class="view" data-view="timers">
-        <div class="mini-topbar">
-          <div class="quick-links">
-            <button data-nav="hub">Hub</button>
-            <button data-nav="turns">Initiative</button>
-            <button data-nav="notes">Notes</button>
-            <button data-nav="timers" class="active">Timer</button>
-            <button data-nav="npc">NPC</button>
-            <button class="quick-roll" data-nav="dice">Quick Roll</button>
+            <div id="timerList" class="timer-grid"></div>
           </div>
-        </div>
-        <div class="panel">
-          <header>
-            <div>
-              <p class="eyebrow">Timer multipli</p>
-              <h2>Countdown e cronometri</h2>
+        </section>
+
+        <section class="view" data-view="notes">
+          <div class="mini-topbar">
+            <div class="quick-links">
+              <button data-nav="hub">Hub</button>
+              <button data-nav="turns">Initiative</button>
+              <button data-nav="notes" class="active">Notes</button>
+              <button data-nav="timers">Timer</button>
+              <button data-nav="npc">NPC</button>
+              <button class="quick-roll" data-nav="dice">Quick Roll</button>
             </div>
-            <div class="shortcuts">
-              <button class="ghost preset" data-seconds="6">Round 6s</button>
-              <button class="ghost preset" data-seconds="60">1m</button>
-              <button class="ghost preset" data-seconds="300">5m</button>
-              <button class="ghost preset" data-seconds="600">10m</button>
-            </div>
-          </header>
-
-          <div class="input-row">
-            <input id="timerLabel" placeholder="Nome timer (es. Porta segreta)">
-            <input id="timerSeconds" type="number" min="1" value="300">
-            <select id="timerMode">
-              <option value="countdown">Countdown</option>
-              <option value="stopwatch">Cronometro</option>
-            </select>
-            <button id="addTimer" class="primary">Crea</button>
           </div>
-
-          <div id="timerList" class="timer-grid"></div>
-        </div>
-      </section>
-
-      <section class="view" data-view="notes">
-        <div class="mini-topbar">
-          <div class="quick-links">
-            <button data-nav="hub">Hub</button>
-            <button data-nav="turns">Initiative</button>
-            <button data-nav="notes" class="active">Notes</button>
-            <button data-nav="timers">Timer</button>
-            <button data-nav="npc">NPC</button>
-            <button class="quick-roll" data-nav="dice">Quick Roll</button>
-          </div>
-        </div>
-        <div class="panel">
-          <header>
-            <div>
-              <p class="eyebrow">Note del DM</p>
-              <h2>Appunti veloci</h2>
-            </div>
-            <div class="muted tiny" id="saveStatus">Auto-save attivo</div>
-          </header>
-
-          <div class="note-layout">
-            <aside class="note-list">
-              <div class="note-list-head">
-                <button id="newNote" class="primary">Nuova nota</button>
-                <button id="deleteNote" class="ghost">Elimina</button>
+          <div class="panel">
+            <header>
+              <div>
+                <p class="eyebrow">Note del DM</p>
+                <h2>Appunti veloci</h2>
               </div>
-              <input id="noteSearch" placeholder="Cerca titolo o testo...">
-              <ul id="noteList"></ul>
-            </aside>
-            <div class="note-editor">
-              <input id="noteTitle" placeholder="Titolo nota (es. Capitolo 1 - Introduzione)">
-              <textarea id="dmNotes" spellcheck="false" placeholder="Agganci di trama, descrizioni visive, voci NPC..."></textarea>
-              <div class="note-actions">
-                <button id="exportNotes" class="ghost">Esporta nota (Markdown)</button>
-                <button id="exportAllNotes" class="ghost">Esporta tutte</button>
-                <button id="importAllNotes" class="ghost">Importa JSON</button>
-                <input id="noteImportInput" type="file" accept="application/json" style="display:none">
+              <div class="muted tiny" id="saveStatus">Auto-save attivo</div>
+            </header>
+
+            <div class="note-layout">
+              <aside class="note-list">
+                <div class="note-list-head">
+                  <button id="newNote" class="primary">Nuova nota</button>
+                  <button id="deleteNote" class="ghost">Elimina</button>
+                </div>
+                <input id="noteSearch" placeholder="Cerca titolo o testo..." />
+                <ul id="noteList"></ul>
+              </aside>
+              <div class="note-editor">
+                <input
+                  id="noteTitle"
+                  placeholder="Titolo nota (es. Capitolo 1 - Introduzione)"
+                />
+                <textarea
+                  id="dmNotes"
+                  spellcheck="false"
+                  placeholder="Agganci di trama, descrizioni visive, voci NPC..."
+                ></textarea>
+                <div class="note-actions">
+                  <button id="exportNotes" class="ghost">
+                    Esporta nota (Markdown)
+                  </button>
+                  <button id="exportAllNotes" class="ghost">
+                    Esporta tutte
+                  </button>
+                  <button id="importAllNotes" class="ghost">
+                    Importa JSON
+                  </button>
+                  <input
+                    id="noteImportInput"
+                    type="file"
+                    accept="application/json"
+                    style="display: none"
+                  />
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </main>
+    </div>
 
-    </main>
-  </div>
-
-  <script type="module" src="main.js"></script>
-</body>
+    <script type="module" src="main.js"></script>
+  </body>
 </html>

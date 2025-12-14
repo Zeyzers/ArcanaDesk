@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap");
 
 :root {
   color-scheme: dark;
@@ -12,10 +12,25 @@
   --accent-2: #7ab7ff;
   --danger: #ff7b7b;
   --shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
-  font-family: 'Space Grotesk', 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
-  background: radial-gradient(120% 120% at 15% 20%, rgba(108, 240, 194, 0.08), transparent),
-              radial-gradient(100% 120% at 80% 0%, rgba(122, 183, 255, 0.09), transparent),
-              var(--bg);
+  font-family:
+    "Space Grotesk",
+    "Inter",
+    "Segoe UI",
+    system-ui,
+    -apple-system,
+    sans-serif;
+  background:
+    radial-gradient(
+      120% 120% at 15% 20%,
+      rgba(108, 240, 194, 0.08),
+      transparent
+    ),
+    radial-gradient(
+      100% 120% at 80% 0%,
+      rgba(122, 183, 255, 0.09),
+      transparent
+    ),
+    var(--bg);
 }
 
 * {
@@ -59,7 +74,11 @@ body {
   display: grid;
   place-items: center;
   font-size: 22px;
-  background: linear-gradient(135deg, rgba(108, 240, 194, 0.2), rgba(122, 183, 255, 0.2));
+  background: linear-gradient(
+    135deg,
+    rgba(108, 240, 194, 0.2),
+    rgba(122, 183, 255, 0.2)
+  );
   border: 1px solid var(--border);
   box-shadow: var(--shadow);
 }
@@ -205,7 +224,9 @@ main {
   opacity: 1;
 }
 
-input, select, textarea {
+input,
+select,
+textarea {
   width: 100%;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid var(--border);
@@ -362,7 +383,9 @@ button.ghost {
 }
 
 .mono {
-  font-family: 'JetBrains Mono', 'Space Grotesk', ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-family:
+    "JetBrains Mono", "Space Grotesk", ui-monospace, SFMono-Regular, Menlo,
+    monospace;
 }
 
 .muted {
@@ -469,7 +492,9 @@ button.ghost {
   padding: 12px;
   background: rgba(255, 255, 255, 0.03);
   cursor: pointer;
-  transition: border-color 0.12s ease, transform 0.12s ease;
+  transition:
+    border-color 0.12s ease,
+    transform 0.12s ease;
   min-height: 56px;
 }
 
@@ -540,7 +565,9 @@ button.ghost {
   padding: 12px;
   background: rgba(255, 255, 255, 0.03);
   cursor: pointer;
-  transition: border-color 0.12s ease, transform 0.12s ease;
+  transition:
+    border-color 0.12s ease,
+    transform 0.12s ease;
   min-height: 56px;
 }
 
@@ -548,6 +575,14 @@ button.ghost {
   border-color: var(--accent);
   box-shadow: 0 0 0 1px rgba(108, 240, 194, 0.3);
   transform: translateY(-1px);
+}
+
+.npc-list li.ko {
+  border-color: var(--danger);
+}
+
+.npc-list li.bloodied {
+  border-color: var(--accent-2);
 }
 
 .npc-title {
@@ -560,6 +595,12 @@ button.ghost {
   font-size: 12px;
   margin-top: 4px;
   line-height: 1.3;
+}
+
+.hp-controls {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
 }
 
 .npc-editor {
@@ -595,6 +636,10 @@ button.ghost {
   cursor: pointer;
 }
 
+.badge.time {
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
 .view {
   display: none;
 }
@@ -619,7 +664,9 @@ button.ghost {
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
-  transition: transform 0.12s ease, border-color 0.12s ease;
+  transition:
+    transform 0.12s ease,
+    border-color 0.12s ease;
 }
 
 .card:hover {
