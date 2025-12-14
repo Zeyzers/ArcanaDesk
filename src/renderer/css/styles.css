@@ -289,6 +289,14 @@ button.ghost {
   font-size: 13px;
 }
 
+.kept {
+  color: var(--accent);
+}
+
+.dropped {
+  color: var(--muted);
+}
+
 .history-item .total {
   font-weight: 700;
 }

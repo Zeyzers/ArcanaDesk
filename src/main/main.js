@@ -5,7 +5,8 @@ const Store = require('electron-store');
 const store = new Store({
   name: 'arcanadesk-prefs',
   defaults: {
-    window: { width: 1280, height: 840 }
+    window: { width: 1280, height: 840 },
+    appState: {}
   }
 });
 
@@ -36,6 +37,15 @@ const createWindow = () => {
     store.set('window', { width: newWidth, height: newHeight });
   });
 };
+
+ipcMain.handle('state:get', () => {
+  return store.get('appState') || {};
+});
+
+ipcMain.handle('state:set', (_, data) => {
+  store.set('appState', data || {});
+  return true;
+});
 
 app.whenReady().then(() => {
   if (process.platform === 'win32') {

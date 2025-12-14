@@ -1,18 +1,21 @@
 {
   "name": "arcanadesk",
   "version": "1.0.0",
-  "description": "Lightweight Electron desktop app with DM tools (dice roller, turn tracker, timers, notes, conditions).",
+  "description": "Lightweight Electron desktop app with DM tools for tabletop RPGs.",
   "main": "src/main/main.js",
   "scripts": {
     "start": "electron .",
     "dev": "electron .",
-    "lint": "echo \"Add linting\""
+    "lint": "echo \"Add linting\"",
+    "pack:win": "electron-packager . ArcanaDesk --platform=win32 --arch=x64 --out=dist --overwrite --prune=true"
+    
   },
   "dependencies": {
     "electron-store": "^8.1.0"
   },
   "devDependencies": {
-    "electron": "^31.0.2"
+    "electron": "^31.0.2",
+    "electron-packager": "^17.1.2"
   },
   "engines": {
     "node": ">=18"

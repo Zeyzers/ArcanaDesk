@@ -1,5 +1,3 @@
-const storageKey = 'arcanadesk-state';
-
 const uid = () =>
   typeof crypto !== 'undefined' && crypto.randomUUID
     ? crypto.randomUUID()
@@ -17,51 +15,57 @@ const defaultState = {
   preferences: { lastView: 'hub' }
 };
 
-let state = (() => {
-  try {
-    const raw = localStorage.getItem(storageKey);
-    if (!raw) return { ...defaultState };
-    return { ...defaultState, ...JSON.parse(raw) };
-  } catch (e) {
-    console.warn('Unable to load state, using defaults', e);
-    return { ...defaultState };
+let state = { ...defaultState };
+
+const persist = () => {
+  if (window.arcanaDesk?.saveState) {
+    window.arcanaDesk.saveState(state).catch((e) => console.warn('IPC persist failed', e));
   }
-})();
+};
 
-const persist = () => localStorage.setItem(storageKey, JSON.stringify(state));
+const migrateState = () => {
+  state.preferences = { lastView: 'hub', ...(state.preferences || {}) };
+  state.turnOrder = (state.turnOrder || []).map((t) => ({ conditions: [], ...t }));
 
-state.preferences = { lastView: 'hub', ...(state.preferences || {}) };
-state.turnOrder = (state.turnOrder || []).map((t) => ({ conditions: [], ...t }));
+  if (state.conditions?.length) {
+    state.conditions.forEach((c) => {
+      const target = state.turnOrder.find((t) => t.name === c.target);
+      if (target) {
+        target.conditions.push({
+          id: c.id || uid(),
+          type: c.type,
+          note: c.note,
+          ts: c.ts || Date.now()
+        });
+      }
+    });
+    state.conditions = [];
+  }
 
-// migrate legacy conditions array (from old view) into turn entries
-if (state.conditions?.length) {
-  state.conditions.forEach((c) => {
-    const target = state.turnOrder.find((t) => t.name === c.target);
-    if (target) {
-      target.conditions.push({
-        id: c.id || uid(),
-        type: c.type,
-        note: c.note,
-        ts: c.ts || Date.now()
-      });
+  if (typeof state.notes === 'string') {
+    const id = uid();
+    state.notes = [{ id, title: 'Nota', content: state.notes, ts: Date.now() }];
+    state.currentNoteId = id;
+  }
+
+  if (!Array.isArray(state.npcs)) {
+    state.npcs = [];
+  }
+};
+
+const loadPersistedState = async () => {
+  let loaded = null;
+  if (window.arcanaDesk?.loadState) {
+    try {
+      loaded = await window.arcanaDesk.loadState();
+    } catch (e) {
+      console.warn('IPC load failed', e);
     }
-  });
-  state.conditions = [];
+  }
+  state = { ...defaultState, ...(loaded || {}) };
+  migrateState();
   persist();
-}
-
-// migrate legacy single-note string to multi-note array
-if (typeof state.notes === 'string') {
-  const id = uid();
-  state.notes = [{ id, title: 'Nota', content: state.notes, ts: Date.now() }];
-  state.currentNoteId = id;
-  persist();
-}
-
-// ensure npcs structure
-if (!Array.isArray(state.npcs)) {
-  state.npcs = [];
-}
+};
 
 const el = (id) => document.getElementById(id);
 
@@ -148,10 +152,18 @@ const parseRoll = (formula) => {
         }
       };
 
+      // detect impossible reroll conditions (e.g., r>=6 on a d6)
+      if (rerollVal || rerollVal === 0) {
+        const allReroll = Array.from({ length: faces }, (_, i) => i + 1).every(shouldReroll);
+        if (allReroll) {
+          throw new Error(`Condizione di reroll impossibile per d${faces}: ${term}`);
+        }
+      }
+
       const rollDie = () => {
         let val = Math.floor(Math.random() * faces) + 1;
         let attempts = 0;
-        while (shouldReroll(val) && attempts < 10) {
+        while (shouldReroll(val) && attempts < 50) {
           val = Math.floor(Math.random() * faces) + 1;
           attempts += 1;
         }
@@ -236,7 +248,24 @@ const renderHistory = () => {
     const li = document.createElement('li');
     li.className = 'history-item';
     const rollsText = entry.breakdown
-      .map((p) => (p.type === 'dice' ? `${p.raw} [${p.kept.join(',')}]` : p.value))
+      .map((p) => {
+        if (p.type !== 'dice') return p.value;
+        const keptCopy = [...p.kept];
+        const dropped = [];
+        p.rolls.forEach((r) => {
+          const idx = keptCopy.indexOf(r);
+          if (idx !== -1) {
+            keptCopy.splice(idx, 1);
+          } else {
+            dropped.push(r);
+          }
+        });
+        const keptStr = p.kept.length ? `<span class="kept">${p.kept.join(',')}</span>` : '';
+        const dropStr = dropped.length
+          ? `<span class="dropped">(${dropped.join(',')})</span>`
+          : '';
+        return `${p.raw} [${keptStr}${keptStr && dropStr ? ' ' : ''}${dropStr}]`;
+      })
       .join(' + ');
     li.innerHTML = `
       <div>
@@ -745,6 +774,10 @@ exportAllNotes?.addEventListener('click', () => {
 });
 
 const importNotesFromFile = (file) => {
+  if (file.size > 2_000_000) {
+    alert('File troppo grande (>2MB).');
+    return;
+  }
   const reader = new FileReader();
   reader.onload = () => {
     try {
@@ -765,6 +798,7 @@ const importNotesFromFile = (file) => {
       state.currentNoteId = state.notes[0].id;
       persist();
       loadNote();
+      alert(`Import note completato: ${cleanNotes.length} note caricate.`);
     } catch (err) {
       alert('Import fallito: ' + err.message);
     }
@@ -886,17 +920,17 @@ const loadNpc = () => {
   if (!npc) return;
   npcName.value = npc.name || '';
   npcType.value = npc.type || '';
-  npcAC.value = npc.ac || '';
-  npcHP.value = npc.hp || '';
+  npcAC.value = Number.isFinite(npc.ac) ? npc.ac : '';
+  npcHP.value = Number.isFinite(npc.hp) ? npc.hp : '';
   npcSpeed.value = npc.speed || '';
   npcTags.value = npc.tags || '';
   npcNotes.value = npc.notes || '';
-  npcSTR.value = npc.str || '';
-  npcDEX.value = npc.dex || '';
-  npcCON.value = npc.con || '';
-  npcINT.value = npc.int || '';
-  npcWIS.value = npc.wis || '';
-  npcCHA.value = npc.cha || '';
+  npcSTR.value = Number.isFinite(npc.str) ? npc.str : '';
+  npcDEX.value = Number.isFinite(npc.dex) ? npc.dex : '';
+  npcCON.value = Number.isFinite(npc.con) ? npc.con : '';
+  npcINT.value = Number.isFinite(npc.int) ? npc.int : '';
+  npcWIS.value = Number.isFinite(npc.wis) ? npc.wis : '';
+  npcCHA.value = Number.isFinite(npc.cha) ? npc.cha : '';
   renderNpcList();
 };
 
@@ -908,17 +942,17 @@ const queueSaveNpc = () => {
     if (!npc) return;
     npc.name = npcName.value.trim() || 'Senza nome';
     npc.type = npcType.value.trim();
-    npc.ac = npcAC.value;
-    npc.hp = npcHP.value;
+    npc.ac = Number(npcAC.value);
+    npc.hp = Number(npcHP.value);
     npc.speed = npcSpeed.value.trim();
     npc.tags = npcTags.value.trim();
     npc.notes = npcNotes.value;
-    npc.str = npcSTR.value;
-    npc.dex = npcDEX.value;
-    npc.con = npcCON.value;
-    npc.int = npcINT.value;
-    npc.wis = npcWIS.value;
-    npc.cha = npcCHA.value;
+    npc.str = Number(npcSTR.value);
+    npc.dex = Number(npcDEX.value);
+    npc.con = Number(npcCON.value);
+    npc.int = Number(npcINT.value);
+    npc.wis = Number(npcWIS.value);
+    npc.cha = Number(npcCHA.value);
     npc.ts = Date.now();
     persist();
     renderNpcList();
@@ -993,6 +1027,10 @@ exportAllNpc?.addEventListener('click', () => {
 });
 
 const importNpcFromFile = (file) => {
+  if (file.size > 2_000_000) {
+    alert('File NPC troppo grande (>2MB).');
+    return;
+  }
   const reader = new FileReader();
   reader.onload = () => {
     try {
@@ -1023,6 +1061,7 @@ const importNpcFromFile = (file) => {
       state.currentNpcId = state.npcs[0].id;
       persist();
       loadNpc();
+      alert(`Import NPC completato: ${clean.length} schede caricate.`);
     } catch (err) {
       alert('Import NPC fallito: ' + err.message);
     }
@@ -1039,10 +1078,15 @@ npcImportInput?.addEventListener('change', (e) => {
 });
 
 // INITIALIZE ---------------------------------------------
-const hasView = document.querySelector(`[data-view="${state.preferences.lastView}"]`);
-setView(hasView ? state.preferences.lastView : 'hub');
-renderHistory();
-renderTurns();
-renderTimers();
-loadNote();
-loadNpc();
+const init = async () => {
+  await loadPersistedState();
+  const hasView = document.querySelector(`[data-view="${state.preferences.lastView}"]`);
+  setView(hasView ? state.preferences.lastView : 'hub');
+  renderHistory();
+  renderTurns();
+  renderTimers();
+  loadNote();
+  loadNpc();
+};
+
+init();
