@@ -12,7 +12,7 @@ const defaultState = {
   npcs: [],
   currentNpcId: null,
   timers: [],
-  preferences: { lastView: "hub" },
+  preferences: { lastView: "hub", confirmDeletes: true },
 };
 
 let state = { ...defaultState };
@@ -26,7 +26,7 @@ const persist = () => {
 };
 
 const migrateState = () => {
-  state.preferences = { lastView: "hub", ...(state.preferences || {}) };
+  state.preferences = { lastView: "hub", confirmDeletes: true, ...(state.preferences || {}) };
   state.turnOrder = (state.turnOrder || []).map((t) => ({
     conditions: [],
     ...t,
@@ -59,6 +59,11 @@ const migrateState = () => {
   state.preferences.npcSort = state.preferences.npcSort || "name";
 };
 
+const confirmAction = (message) => {
+  if (state.preferences.confirmDeletes === false) return true;
+  return window.confirm(message);
+};
+
 const loadPersistedState = async () => {
   let loaded = null;
   if (window.arcanaDesk?.loadState) {
@@ -81,6 +86,12 @@ const rollButton = el("rollButton");
 const historyList = el("historyList");
 const diceStats = el("diceStats");
 const clearHistory = el("clearHistory");
+const enableRollInput = () => {
+  if (!rollInput) return;
+  rollInput.disabled = false;
+  rollInput.readOnly = false;
+  rollInput.removeAttribute("disabled");
+};
 
 // NAVIGATION ---------------------------------------------
 const views = document.querySelectorAll("[data-view]");
@@ -243,6 +254,7 @@ const renderHistory = () => {
   if (!state.diceHistory.length) {
     historyList.innerHTML = '<li class="empty">Nessun tiro ancora.</li>';
     diceStats.textContent = "";
+    enableRollInput();
     return;
   }
 
@@ -338,9 +350,15 @@ document.querySelectorAll("[data-die]").forEach((btn) => {
 });
 
 clearHistory.addEventListener("click", () => {
+  if (!confirmAction("Confermi la cancellazione della cronologia dadi?")) return;
   state.diceHistory = [];
   persist();
   renderHistory();
+  enableRollInput();
+  if (rollInput) {
+    rollInput.value = "";
+    rollInput.focus();
+  }
 });
 
 // TURN TRACKER ------------------------------------------
@@ -427,6 +445,7 @@ const renderTurns = () => {
     `;
 
     li.querySelector('[data-action="remove"]').addEventListener("click", () => {
+      if (!confirmAction("Rimuovere questo partecipante?")) return;
       state.turnOrder = state.turnOrder.filter((t) => t.id !== entry.id);
       if (state.currentTurnId === entry.id) {
         state.currentTurnId = state.turnOrder[0]?.id || null;
@@ -444,6 +463,7 @@ const renderTurns = () => {
 
     li.querySelectorAll("[data-cond]").forEach((btn) =>
       btn.addEventListener("click", () => {
+        if (!confirmAction("Rimuovere questa condizione?")) return;
         entry.conditions = (entry.conditions || []).filter(
           (c) => c.id !== btn.dataset.cond,
         );
@@ -667,6 +687,7 @@ const renderTimers = () => {
     card
       .querySelector('[data-action="remove"]')
       .addEventListener("click", () => {
+        if (!confirmAction("Rimuovere questo timer?")) return;
         stopTimerInterval(t.id);
         state.timers = state.timers.filter((x) => x.id !== t.id);
         persist();
@@ -720,6 +741,7 @@ const exportAllNotes = el("exportAllNotes");
 const importAllNotes = el("importAllNotes");
 const noteImportInput = el("noteImportInput");
 const saveStatus = el("saveStatus");
+const confirmDeletesToggle = el("confirmDeletes");
 
 const ensureNote = () => {
   if (!state.notes.length) {
@@ -815,6 +837,7 @@ newNoteBtn.addEventListener("click", () => {
 });
 
 deleteNoteBtn.addEventListener("click", () => {
+  if (!confirmAction("Eliminare questa nota?")) return;
   state.notes = state.notes.filter((n) => n.id !== state.currentNoteId);
   state.currentNoteId = state.notes[0]?.id || null;
   ensureNote();
@@ -895,6 +918,11 @@ noteImportInput?.addEventListener("change", (e) => {
   noteImportInput.value = "";
 });
 
+confirmDeletesToggle?.addEventListener("change", () => {
+  state.preferences.confirmDeletes = confirmDeletesToggle.checked;
+  persist();
+});
+
 // NPC SHEETS --------------------------------------------
 const npcName = el("npcName");
 const npcType = el("npcType");
@@ -920,6 +948,11 @@ const exportNpc = el("exportNpc");
 const exportAllNpc = el("exportAllNpc");
 const importAllNpc = el("importAllNpc");
 const npcImportInput = el("npcImportInput");
+const atkName = el("atkName");
+const atkToHit = el("atkToHit");
+const atkDamage = el("atkDamage");
+const addAttackBtn = el("addAttack");
+const attackListEl = el("attackList");
 
 const ensureNpc = () => {
   if (!state.npcs.length) {
@@ -942,6 +975,7 @@ const ensureNpc = () => {
         int: "",
         wis: "",
         cha: "",
+        attacks: [],
         ts: Date.now(),
       },
     ];
@@ -989,17 +1023,18 @@ const renderNpcList = () => {
       const titleEl = document.createElement("div");
       titleEl.className = "npc-title";
       titleEl.textContent = n.name || "Senza nome";
-      const metaEl = document.createElement("div");
-      metaEl.className = "npc-meta";
-      const meta = [
-        n.type && `Tipo: ${n.type}`,
-        n.ac && `CA ${n.ac}`,
-        n.hp && `HP ${n.hpCurrent ?? n.hp}/${n.hp}`,
-        n.tags && `Tag: ${n.tags}`,
-        n.str && `STR ${n.str}`,
-      ]
-        .filter(Boolean)
-        .join(" · ");
+  const metaEl = document.createElement("div");
+  metaEl.className = "npc-meta";
+  const meta = [
+    n.type && `Tipo: ${n.type}`,
+    n.ac && `CA ${n.ac}`,
+    n.hp && `HP ${n.hpCurrent ?? n.hp}/${n.hp}`,
+    n.tags && `Tag: ${n.tags}`,
+    n.str && `STR ${n.str}`,
+    n.attacks?.length ? `Atk: ${n.attacks.length}` : null,
+  ]
+    .filter(Boolean)
+    .join(" · ");
       metaEl.textContent = meta;
       li.appendChild(titleEl);
       li.appendChild(metaEl);
@@ -1030,6 +1065,7 @@ const loadNpc = () => {
   npcINT.value = Number.isFinite(npc.int) ? npc.int : "";
   npcWIS.value = Number.isFinite(npc.wis) ? npc.wis : "";
   npcCHA.value = Number.isFinite(npc.cha) ? npc.cha : "";
+  renderAttacks(npc);
   renderNpcList();
 };
 
@@ -1048,14 +1084,14 @@ const queueSaveNpc = () => {
       npcHPCurrent.value === "" ? null : Number(npcHPCurrent.value);
     npc.speed = npcSpeed.value.trim();
     npc.tags = npcTags.value.trim();
-    npc.notes = npcNotes.value;
-    npc.str = Number(npcSTR.value);
-    npc.dex = Number(npcDEX.value);
-    npc.con = Number(npcCON.value);
-    npc.int = Number(npcINT.value);
-    npc.wis = Number(npcWIS.value);
-    npc.cha = Number(npcCHA.value);
-    npc.ts = Date.now();
+  npc.notes = npcNotes.value;
+  npc.str = Number(npcSTR.value);
+  npc.dex = Number(npcDEX.value);
+  npc.con = Number(npcCON.value);
+  npc.int = Number(npcINT.value);
+  npc.wis = Number(npcWIS.value);
+  npc.cha = Number(npcCHA.value);
+  npc.ts = Date.now();
     persist();
     renderNpcList();
   }, 250);
@@ -1080,6 +1116,7 @@ newNpcBtn?.addEventListener("click", () => {
     int: "",
     wis: "",
     cha: "",
+    attacks: [],
     ts: Date.now(),
   });
   state.currentNpcId = id;
@@ -1088,6 +1125,7 @@ newNpcBtn?.addEventListener("click", () => {
 });
 
 deleteNpcBtn?.addEventListener("click", () => {
+  if (!confirmAction("Eliminare questa scheda NPC?")) return;
   state.npcs = state.npcs.filter((n) => n.id !== state.currentNpcId);
   state.currentNpcId = state.npcs[0]?.id || null;
   ensureNpc();
@@ -1182,6 +1220,13 @@ const importNpcFromFile = (file) => {
             typeof n.wis === "number" || typeof n.wis === "string" ? n.wis : "",
           cha:
             typeof n.cha === "number" || typeof n.cha === "string" ? n.cha : "",
+          attacks: Array.isArray(n.attacks)
+            ? n.attacks.map((a) => ({
+                name: typeof a.name === "string" ? a.name : "",
+                toHit: Number(a.toHit) || 0,
+                damage: typeof a.damage === "string" ? a.damage : "",
+              }))
+            : [],
           ts: n.ts || Date.now(),
         }))
         .filter((n) => n.name || n.notes);
@@ -1228,12 +1273,82 @@ npcHpUndo?.addEventListener("click", () => {
   loadNpc();
 });
 
+const renderAttacks = (npc) => {
+  attackListEl.innerHTML = "";
+  if (!npc.attacks || !npc.attacks.length) {
+    attackListEl.innerHTML = '<li class="muted tiny">Nessun attacco salvato.</li>';
+    return;
+  }
+  npc.attacks.forEach((atk, idx) => {
+    const li = document.createElement("li");
+    li.className = "attack-item";
+    li.innerHTML = `
+      <div><strong>${atk.name || "Attacco"}</strong></div>
+      <div class="npc-meta">Colpire: +${Number(atk.toHit) || 0} · Danni: ${atk.damage || "-"}</div>
+      <div class="attack-actions">
+        <button class="primary" data-action="hit">Tira per colpire</button>
+        <button class="ghost" data-action="damage">Tira danni</button>
+        <button class="ghost" data-action="remove">Rimuovi</button>
+      </div>
+    `;
+    li.querySelector('[data-action="hit"]').addEventListener("click", () => {
+      const mod = Number(atk.toHit) || 0;
+      const formula = `1d20+${mod}`;
+      try {
+        const result = parseRoll(formula);
+        addHistory(`${npc.name} - ${atk.name} (colpire)`, result);
+        alert(`Tiro per colpire: ${result.total}`);
+      } catch (e) {
+        alert(e.message);
+      }
+    });
+    li.querySelector('[data-action="damage"]').addEventListener("click", () => {
+      const formula = atk.damage?.trim();
+      if (!formula) return alert("Nessuna formula danni.");
+      try {
+        const result = parseRoll(formula);
+        addHistory(`${npc.name} - ${atk.name} (danni)`, result);
+        alert(`Danni: ${result.total}`);
+      } catch (e) {
+        alert(e.message);
+      }
+    });
+    li.querySelector('[data-action="remove"]').addEventListener("click", () => {
+      if (!confirmAction("Rimuovere questo attacco?")) return;
+      npc.attacks.splice(idx, 1);
+      persist();
+      renderAttacks(npc);
+    });
+    attackListEl.appendChild(li);
+  });
+};
+
+addAttackBtn?.addEventListener("click", () => {
+  const npc = getCurrentNpc();
+  if (!npc) return;
+  const name = atkName.value.trim();
+  const toHit = Number(atkToHit.value) || 0;
+  const damage = atkDamage.value.trim();
+  if (!name) return alert("Nome attacco richiesto.");
+  npc.attacks = npc.attacks || [];
+  npc.attacks.push({ name, toHit, damage });
+  atkName.value = "";
+  atkToHit.value = "";
+  atkDamage.value = "";
+  persist();
+  renderAttacks(npc);
+});
+
 // INITIALIZE ---------------------------------------------
 const init = async () => {
   await loadPersistedState();
   const hasView = document.querySelector(
     `[data-view="${state.preferences.lastView}"]`,
   );
+  if (confirmDeletesToggle) {
+    confirmDeletesToggle.checked = state.preferences.confirmDeletes !== false;
+  }
+  enableRollInput();
   setView(hasView ? state.preferences.lastView : "hub");
   renderHistory();
   renderTurns();
