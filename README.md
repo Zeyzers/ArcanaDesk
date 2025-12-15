@@ -26,9 +26,4 @@ Build instructions (Windows/Linux) and tooling details live in `desktop/README.m
 
 ### Android
 
-```bash
-cd android
-# work-in-progress
-```
-
-The Android client does not exist yet; use this folder when you bootstrap the mobile codebase (React Native/Flutter/etc.). Update this README and add `android/README.md` when work begins.
+placeholder
