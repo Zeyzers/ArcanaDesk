@@ -9,7 +9,8 @@
     "lint": "eslint . --ext .js,.cjs,.mjs",
     "format:check": "prettier --check \"**/*.{js,json,css,html}\"",
     "format:write": "prettier --write \"**/*.{js,json,css,html}\"",
-    "pack:win": "electron-packager . ArcanaDesk --platform=win32 --arch=x64 --out=dist --overwrite --prune=true"
+    "pack:win": "electron-packager . ArcanaDesk --platform=win32 --arch=x64 --out=dist --overwrite --prune=true",
+    "pack:linux": "electron-packager . ArcanaDesk --platform=linux --arch=x64 --out=dist --overwrite --prune=true"
   },
   "dependencies": {
     "electron-store": "^8.1.0"
